@@ -21,3 +21,6 @@
 
 ## NN vs VN 
     - different column numbers but works the exact same
+
+
+## make an executable lol
