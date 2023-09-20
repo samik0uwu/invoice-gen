@@ -3,7 +3,8 @@
 ## TO-DO:
 ### GUI
     - tkinter
-    - textbox, buttons, combobox?
+    - textbox, buttons, combobox, filedialog
+    - make it pretty pls its so ugly rn :c
 ### Input
     - load file
     - get relevant columns
