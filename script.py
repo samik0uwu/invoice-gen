@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog as fd
-from tkinter import PhotoImage
+
 
 def callback(): #rename from callback bcuz then im gonna have to save the file too in a different method
     name = fd.askopenfilename()
