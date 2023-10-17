@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog as fd
-
+import pylightxl.pylightxl.pylightxl as xl
 
 def callback(): #rename from callback bcuz then im gonna have to save the file too in a different method
     name = fd.askopenfilename()
@@ -38,6 +38,32 @@ browse_btn.grid(column=1, row=0)
 combobox.grid(column=0, row=1)
 export_btn.grid(column=1, row=1)
 output_text.grid(column=0, row=3, columnspan=2, padx=10, pady=10)
+
+#https://pylightxl.readthedocs.io/en/latest/quickstart.html
+
+#make a method : input col and output col int, i just get the col from input file and put it into output except the ones i have to add tgether
+
+db = xl.readxl(fn='inputVN.xlsx')
+
+
+db.ws(ws='Sheet1').range('AO2:AO48')
+
+
+data =db.ws(ws='Sheet1').col(col=41)
+
+# create a blank db
+dbOut = xl.Database()
+# add a blank worksheet to the db
+dbOut.add_ws(ws="Sheet1")
+
+
+for item in enumerate(data, start=1):
+    dbOut.ws(ws="Sheet1").update_index(row=1, col=1, val=item)
+
+#dbOut.ws(ws="Sheet1").update_index(row=1, col=1, val=data)
+
+xl.writexl(db=dbOut, fn="output.xlsx")
+
 
 
 root.mainloop()
