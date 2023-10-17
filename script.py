@@ -7,7 +7,7 @@ def callback(): #rename from callback bcuz then im gonna have to save the file t
     name = fd.askopenfilename()
     path_text.insert('end', name)
 
-def lmao():
+def lmao(inPath, outPath, inCol, outCol):
     db = xl.readxl(fn='inputVN.xlsx')
     db.ws(ws='Sheet1').range('AO2:AO48')
     data =db.ws(ws='Sheet1').col(col=41)
@@ -18,13 +18,24 @@ def lmao():
     xl.writexl(db=dbOut, fn="output.xlsx")
 
 
+def writeCol(inPath, outPath, inCol, outCol):
+    db = xl.readxl(fn=inPath)
+    db.ws(ws='Sheet1').range('AO2:AO48')
+    data =db.ws(ws='Sheet1').col(col=inCol)
+    dbOut = xl.Database()
+    dbOut.add_ws(ws="Sheet1")
+    for row_id, item in enumerate(data, start=1):
+        dbOut.ws(ws="Sheet1").update_index(row=row_id, col=outCol, val=item)
+    xl.writexl(db=dbOut, fn=outPath)
+
+
 
 root = Tk()
 root.geometry('350x200')
 root.title(':3')
 
 path_text = Text(root, height = 2, width = 20) #make readonly
-browse_btn = Button(root, text="Browse", command=lmao)
+browse_btn = Button(root, text="Browse", command=callback)
 
 #https://www.pythontutorial.net/tkinter/tkinter-combobox/
 current_var = StringVar()
