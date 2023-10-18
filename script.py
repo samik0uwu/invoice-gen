@@ -17,16 +17,27 @@ def lmao(inPath, outPath, inCol, outCol):
         dbOut.ws(ws="Sheet1").update_index(row=row_id, col=1, val=item)
     xl.writexl(db=dbOut, fn="output.xlsx")
 
+def export():
+    #select output file
+    name = fd.asksaveasfile()
+    writeCol(path_text, name)
 
 def writeCol(inPath, outPath, inCol, outCol):
     db = xl.readxl(fn=inPath)
-    db.ws(ws='Sheet1').range('AO2:AO48')
+    #db.ws(ws='Sheet1').range('AO2:AO48')
     data =db.ws(ws='Sheet1').col(col=inCol)
     dbOut = xl.Database()
     dbOut.add_ws(ws="Sheet1")
+    if(current_var.get=='VN'):
+        generateVN(data, dbOut)
     for row_id, item in enumerate(data, start=1):
         dbOut.ws(ws="Sheet1").update_index(row=row_id, col=outCol, val=item)
     xl.writexl(db=dbOut, fn=outPath)
+
+def generateVN(data, db):
+    for row_id, item in enumerate(data, start=1):
+        db.ws(ws="Sheet1").update_index(row=row_id, col=1, val=item)
+
 
 
 
@@ -43,7 +54,7 @@ combobox = Combobox(root, textvariable=current_var) #make first value set by def
 combobox['values']=('VN', 'NN')
 combobox['state'] = 'readonly'
 
-export_btn = Button(root, text="Export")
+export_btn = Button(root, text="Export", command=export)
 
 #https://www.pythontutorial.net/tkinter/tkinter-progressbar/
 
