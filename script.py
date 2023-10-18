@@ -25,18 +25,30 @@ def export():
 def writeCol(inPath, outPath, inCol, outCol):
     db = xl.readxl(fn=inPath)
     #db.ws(ws='Sheet1').range('AO2:AO48')
-    data =db.ws(ws='Sheet1').col(col=inCol)
+
     dbOut = xl.Database()
     dbOut.add_ws(ws="Sheet1")
     if(current_var.get=='VN'):
-        generateVN(data, dbOut)
-    for row_id, item in enumerate(data, start=1):
-        dbOut.ws(ws="Sheet1").update_index(row=row_id, col=outCol, val=item)
+
+        secondCol = [112,71,77,87,95]
+        dbs = [];
+        for i,item in enumerate(secondCol, start=0):
+            dbs.append(db.ws(ws='Sheet1').col(col=item))
+
+        for i in enumerate(dbs, start=0):
+            print(i)
+
+
+        inCols = [160, 142,104,86,83,106]
+
+
+        data =db.ws(ws='Sheet1').col(col=inCol)
+
+        for row_id, item in enumerate(data, start=1):
+            dbOut.ws(ws="Sheet1").update_index(row=row_id, col=outCol, val=item)
     xl.writexl(db=dbOut, fn=outPath)
 
-def generateVN(data, db):
-    for row_id, item in enumerate(data, start=1):
-        db.ws(ws="Sheet1").update_index(row=row_id, col=1, val=item)
+
 
 
 
