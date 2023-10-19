@@ -22,15 +22,15 @@ def export():
     name = fd.asksaveasfile()
     writeCol(path_text, name)
 
-def writeCol(inPath, outPath, inCol, outCol):
-    db = xl.readxl(fn=inPath)
-    #db.ws(ws='Sheet1').range('AO2:AO48')
-
+def writeCol(inPath, outPath, outCol):
+    db = xl.readxl(fn=inPath) #db with input data
+    #creaty empty dbs
     dbOut = xl.Database()
     dbOut.add_ws(ws="Sheet1")
     if(current_var.get=='VN'):
+        #sum all these cols to one
         secondCol = [112,71,77,88,95]
-        dbs = [];
+        dbs = []; #db with all cols from secondCol
         for i,item in enumerate(secondCol, start=0):
             dbs.append(db.ws(ws='Sheet1').col(col=item))
         newCol = [];
@@ -41,15 +41,20 @@ def writeCol(inPath, outPath, inCol, outCol):
                     x+=dbs[j][i]
                 else:
                     break;        
-        newCol.append(x)
+            newCol.append(x) #all into one list with one col
 
-        inCols = [160, 142,104,86,83,106]
+        inCols = [160,0, 142,104,86,83,106]
 
+        for item in inCols:
+            data =db.ws(ws='Sheet1').col(col=item)
 
-        data =db.ws(ws='Sheet1').col(col=inCol)
-
-        for row_id, item in enumerate(data, start=1):
-            dbOut.ws(ws="Sheet1").update_index(row=row_id, col=outCol, val=item)
+        for row_id, item in enumerate(data, start=1): #i need to create data before the for i think?
+            dbOut.ws(ws="Sheet1").update_index(row=row_id, col=outCol, val=item) #dont use outcol, figure it out lol
+    elif(current_var.get=='NN'):
+        print("hi")
+    else:
+        #error, have to set VN as default and add message box to display error
+        print("hello")
     xl.writexl(db=dbOut, fn=outPath)
 
 
@@ -89,30 +94,6 @@ export_btn.grid(column=1, row=1)
 output_text.grid(column=0, row=3, columnspan=2, padx=10, pady=10)
 
 #https://pylightxl.readthedocs.io/en/latest/quickstart.html
-
-#make a method : input col and output col int, i just get the col from input file and put it into output except the ones i have to add tgether
-
-# db = xl.readxl(fn='inputVN.xlsx')
-
-
-# db.ws(ws='Sheet1').range('AO2:AO48')
-
-
-# data =db.ws(ws='Sheet1').col(col=41)
-
-# # create a blank db
-# dbOut = xl.Database()
-# # add a blank worksheet to the db
-# dbOut.add_ws(ws="Sheet1")
-
-
-# for item in enumerate(data, start=1):
-#     dbOut.ws(ws="Sheet1").update_index(row=1, col=1, val=item)
-
-# #dbOut.ws(ws="Sheet1").update_index(row=1, col=1, val=data)
-
-# xl.writexl(db=dbOut, fn="output.xlsx")
-
 
 
 root.mainloop()
