@@ -22,24 +22,15 @@ dbs = [];
 for i,item in enumerate(secondCol, start=0):
     dbs.append(db.ws(ws='Sheet1').col(col=item))
 
-# for i, item in enumerate(dbs[0], start=0):
-#     print(i)
-#     print(item)
-#     print("aaaaaaaaaaaaaa")
-
+newCol = [];
 for i in range(len(dbs[0])):
     x=0
-    print("start")
     for j in range(len(dbs)):
         if (isinstance(dbs[j][i], float) or isinstance(dbs[j][i], int)):
             x+=dbs[j][i]
-            print("{:.2f}".format(x))
         else:
-            print("its not float its "+str(type(dbs[j][i])))
+            break;        
+    newCol.append(x)
 
-    print("end")
-         
-    
-    print("{:.2f}".format(x))
-
-
+for item in newCol:
+    print("{:.2f}".format(item))

@@ -29,15 +29,19 @@ def writeCol(inPath, outPath, inCol, outCol):
     dbOut = xl.Database()
     dbOut.add_ws(ws="Sheet1")
     if(current_var.get=='VN'):
-
-        secondCol = [112,71,77,87,95]
+        secondCol = [112,71,77,88,95]
         dbs = [];
         for i,item in enumerate(secondCol, start=0):
             dbs.append(db.ws(ws='Sheet1').col(col=item))
-
-        for i in enumerate(dbs, start=0):
-            print(i)
-
+        newCol = [];
+        for i in range(len(dbs[0])):
+            x=0
+            for j in range(len(dbs)):
+                if (isinstance(dbs[j][i], float) or isinstance(dbs[j][i], int)):
+                    x+=dbs[j][i]
+                else:
+                    break;        
+        newCol.append(x)
 
         inCols = [160, 142,104,86,83,106]
 
