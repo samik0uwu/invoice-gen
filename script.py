@@ -3,30 +3,22 @@ from tkinter.ttk import *
 from tkinter import filedialog as fd
 import pylightxl.pylightxl.pylightxl as xl
 
+inPath="";
 def callback(): #rename from callback bcuz then im gonna have to save the file too in a different method #or not lol
-    name = fd.askopenfilename()
-    path_text.insert('end', name)
-
-def lmao(inPath, outPath, inCol, outCol):
-    db = xl.readxl(fn='inputVN.xlsx')
-    db.ws(ws='Sheet1').range('AO2:AO48')
-    data =db.ws(ws='Sheet1').col(col=41)
-    dbOut = xl.Database()
-    dbOut.add_ws(ws="Sheet1")
-    for row_id, item in enumerate(data, start=1):
-        dbOut.ws(ws="Sheet1").update_index(row=row_id, col=1, val=item)
-    xl.writexl(db=dbOut, fn="output.xlsx")
+    inPath = fd.askopenfilename()
+    path_text.insert('end', inPath)
 
 def export():
     #select output file
     name = fd.asksaveasfile()
-    writeCol(path_text, name)
+    writeCol(name.name) #i need to get text from the path textbox OR save inPath into global variable
 
-def writeCol(inPath, outPath, outCol):
+def writeCol(outPath):
     db = xl.readxl(fn=inPath) #db with input data
     #creaty empty dbs
     dbOut = xl.Database()
-    dbOut.add_ws(ws="Sheet1")
+    dbOut.add_ws(ws="Sheet1") 
+    #have to add EANs etc before all this
     if(current_var.get=='VN'):
         #sum all these cols to one
         secondCol = [112,71,77,88,95]
@@ -43,24 +35,21 @@ def writeCol(inPath, outPath, outCol):
                     break;        
             newCol.append(x) #all into one list with one col
 
-        inCols = [160,0, 142,104,86,83,106]
+        inCols = [160,1, 142,104,86,83,106]
 
-        for item in inCols:
-            data =db.ws(ws='Sheet1').col(col=item)
+        for i,item in enumerate(inCols, start=1):
+            for j, cell in enumerate(db.ws(ws='Sheet1').col(col=item), start=1):
+                dbOut.ws(ws="Sheet1").update_index(row=j, col=i, val=cell)
+        for i, item in enumerate(newCol, start=1):
+            dbOut.ws(ws="Sheet1").update_index(row=i, col=2, val=newCol[i-1])
 
-        for row_id, item in enumerate(data, start=1): #i need to create data before the for i think?
-            dbOut.ws(ws="Sheet1").update_index(row=row_id, col=outCol, val=item) #dont use outcol, figure it out lol
     elif(current_var.get=='NN'):
         print("hi")
     else:
         #error, have to set VN as default and add message box to display error
+        #https://docs.python.org/3/library/tkinter.messagebox.html
         print("hello")
     xl.writexl(db=dbOut, fn=outPath)
-
-
-
-
-
 
 root = Tk()
 root.geometry('350x200')
@@ -79,13 +68,7 @@ export_btn = Button(root, text="Export", command=export)
 
 #https://www.pythontutorial.net/tkinter/tkinter-progressbar/
 
-
-
 output_text = Text(root, height = 4, width = 40) #also make readonly - will be used for errors or sth maybe it might not be necessarry 
-
-
-
-
 
 path_text.grid(column=0, row=0, padx=10, pady=10)
 browse_btn.grid(column=1, row=0)
@@ -94,6 +77,5 @@ export_btn.grid(column=1, row=1)
 output_text.grid(column=0, row=3, columnspan=2, padx=10, pady=10)
 
 #https://pylightxl.readthedocs.io/en/latest/quickstart.html
-
 
 root.mainloop()
