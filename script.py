@@ -3,23 +3,21 @@ from tkinter.ttk import *
 from tkinter import filedialog as fd
 import pylightxl.pylightxl.pylightxl as xl
 
-inPath="";
+
 def callback(): #rename from callback bcuz then im gonna have to save the file too in a different method #or not lol
-    inPath = fd.askopenfilename()
+    global inPath;
+    inPath= fd.askopenfilename()
     path_text.insert('end', inPath)
 
 def export():
-    #select output file
-    name = fd.asksaveasfile()
-    writeCol(name.name) #i need to get text from the path textbox OR save inPath into global variable
-
-def writeCol(outPath):
     db = xl.readxl(fn=inPath) #db with input data
+    print(inPath)
+    print("hello")
     #creaty empty dbs
     dbOut = xl.Database()
     dbOut.add_ws(ws="Sheet1") 
     #have to add EANs etc before all this
-    if(current_var.get=='VN'):
+    if(current_var.get()=='VN'):
         #sum all these cols to one
         secondCol = [112,71,77,88,95]
         dbs = []; #db with all cols from secondCol
@@ -43,13 +41,14 @@ def writeCol(outPath):
         for i, item in enumerate(newCol, start=1):
             dbOut.ws(ws="Sheet1").update_index(row=i, col=2, val=newCol[i-1])
 
-    elif(current_var.get=='NN'):
+    elif(current_var.get()=='NN'):
         print("hi")
     else:
         #error, have to set VN as default and add message box to display error
         #https://docs.python.org/3/library/tkinter.messagebox.html
-        print("hello")
-    xl.writexl(db=dbOut, fn=outPath)
+        print("coze")
+    outName=fd.asksaveasfilename(initialfile="outputVN", defaultextension=".xlsx")
+    xl.writexl(db=dbOut, fn=outName)
 
 root = Tk()
 root.geometry('350x200')
@@ -63,6 +62,7 @@ current_var = StringVar()
 combobox = Combobox(root, textvariable=current_var) #make first value set by default
 combobox['values']=('VN', 'NN')
 combobox['state'] = 'readonly'
+combobox.set("VN")
 
 export_btn = Button(root, text="Export", command=export)
 
