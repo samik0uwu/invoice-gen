@@ -40,14 +40,36 @@ def export():
                 dbOut.ws(ws="Sheet1").update_index(row=j, col=i, val=cell)
         for i, item in enumerate(newCol, start=1):
             dbOut.ws(ws="Sheet1").update_index(row=i, col=2, val=newCol[i-1])
+        #sums of all as last col
 
     elif(current_var.get()=='NN'):
-        print("hi")
+        secondCol = [177,180,174,95,88]
+        dbs = []; #db with all cols from secondCol
+        for i,item in enumerate(secondCol, start=0):
+            dbs.append(db.ws(ws='Sheet1').col(col=item))
+        newCol = [];
+        for i in range(len(dbs[0])):
+            x=0
+            for j in range(len(dbs)):
+                if (isinstance(dbs[j][i], float) or isinstance(dbs[j][i], int)):
+                    x+=dbs[j][i]
+                else:
+                    break;        
+            newCol.append(x) #all into one list with one col
+
+        inCols = [112,1,160]
+
+        for i,item in enumerate(inCols, start=1):
+            for j, cell in enumerate(db.ws(ws='Sheet1').col(col=item), start=1):
+                dbOut.ws(ws="Sheet1").update_index(row=j, col=i, val=cell)
+        for i, item in enumerate(newCol, start=1):
+            dbOut.ws(ws="Sheet1").update_index(row=i, col=2, val=newCol[i-1])
+        #sums of all as last col
     else:
         #error, have to set VN as default and add message box to display error
         #https://docs.python.org/3/library/tkinter.messagebox.html
         print("coze")
-    outName=fd.asksaveasfilename(initialfile="outputVN", defaultextension=".xlsx")
+    outName=fd.asksaveasfilename(initialfile="output", defaultextension=".xlsx")
     xl.writexl(db=dbOut, fn=outName)
 
 root = Tk()
@@ -57,9 +79,9 @@ root.title(':3')
 path_text = Text(root, height = 2, width = 20) #make readonly
 browse_btn = Button(root, text="Browse", command=callback)
 
-#https://www.pythontutorial.net/tkinter/tkinter-combobox/
+
 current_var = StringVar()
-combobox = Combobox(root, textvariable=current_var) #make first value set by default
+combobox = Combobox(root, textvariable=current_var) 
 combobox['values']=('VN', 'NN')
 combobox['state'] = 'readonly'
 combobox.set("VN")
