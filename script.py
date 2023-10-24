@@ -16,7 +16,8 @@ def export():
     #creaty empty dbs
     dbOut = xl.Database()
     dbOut.add_ws(ws="Sheet1") 
-    #have to add EANs etc before all this
+    #have to add EANs etc before all this 
+    #different for VN and NN though
     if(current_var.get()=='VN'):
         #sum all these cols to one
         secondCol = [112,71,77,88,95]
@@ -33,14 +34,14 @@ def export():
                     break;        
             newCol.append(x) #all into one list with one col
 
-        inCols = [160,1, 142,104,86,83,106]
+        inCols = [41,20,160,1, 142,104,86,83,106]
 
         for i,item in enumerate(inCols, start=1):
             for j, cell in enumerate(db.ws(ws='Sheet1').col(col=item), start=1):
                 dbOut.ws(ws="Sheet1").update_index(row=j, col=i, val=cell)
         for i, item in enumerate(newCol, start=1):
-            dbOut.ws(ws="Sheet1").update_index(row=i, col=2, val=newCol[i-1])
-        #sums of all as last col
+            dbOut.ws(ws="Sheet1").update_index(row=i, col=4, val=newCol[i-1])
+            dbOut.ws(ws="Sheet1").update_index(row=i, col=10, val="=C{}+D{}+E{}+F{}+G{}+H{}+I{}".format(i,i,i,i,i,i,i))
 
     elif(current_var.get()=='NN'):
         secondCol = [177,180,174,95,88]
@@ -57,13 +58,17 @@ def export():
                     break;        
             newCol.append(x) #all into one list with one col
 
-        inCols = [112,1,160]
+        inCols = [41,20,112,1,160]
 
         for i,item in enumerate(inCols, start=1):
             for j, cell in enumerate(db.ws(ws='Sheet1').col(col=item), start=1):
                 dbOut.ws(ws="Sheet1").update_index(row=j, col=i, val=cell)
         for i, item in enumerate(newCol, start=1):
-            dbOut.ws(ws="Sheet1").update_index(row=i, col=2, val=newCol[i-1])
+            dbOut.ws(ws="Sheet1").update_index(row=i, col=4, val=newCol[i-1])
+            dbOut.ws(ws="Sheet1").update_index(row=i, col=6, val="=C{}+D{}+E{}".format(i,i,i))
+        
+        
+
         #sums of all as last col
     else:
         #error, have to set VN as default and add message box to display error
