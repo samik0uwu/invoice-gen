@@ -8,9 +8,22 @@ def callback(): #rename from callback bcuz then im gonna have to save the file t
     global inPath;
     inPath= fd.askopenfilename()
     path_text.insert('end', inPath)
+    
+def importCallback(): #rename from callback bcuz then im gonna have to save the file too in a different method #or not lol
+    global templatePath;
+    templatePath= fd.askopenfilename()
+    template_text.insert('end', templatePath)
+
+
+# def importExcel():
+#     print("h")
 
 def export():
-    db = xl.readxl(fn=inPath) #db with input data
+    db = xl.readxl(fn=inPath) #db with input data #delete first(actually second row) because its not needed and its messing things up
+    db.add_nr(name="Table1", ws="Sheet1", address="A2:GA2")
+    db.remove_nr(name="Table1")
+    
+    dbTemplate = xl.readxl(fn=templatePath)
     print(inPath)
     print("hello")
     #creaty empty dbs
@@ -33,15 +46,44 @@ def export():
                 else:
                     break;        
             newCol.append(x) #all into one list with one col
+        
+        for i, cell in enumerate(dbTemplate.ws(dbTemplate.ws_names[0]).col(col=2), start=1):
+            dbOut.ws(ws="Sheet1").update_index(row=i, col=1, val=cell)
 
-        inCols = [41,20,160,1, 142,104,86,83,106]
 
-        for i,item in enumerate(inCols, start=1):
-            for j, cell in enumerate(db.ws(ws='Sheet1').col(col=item), start=1):
-                dbOut.ws(ws="Sheet1").update_index(row=j, col=i, val=cell)
-        for i, item in enumerate(newCol, start=1):
-            dbOut.ws(ws="Sheet1").update_index(row=i, col=4, val=newCol[i-1])
-            dbOut.ws(ws="Sheet1").update_index(row=i, col=10, val="=C{}+D{}+E{}+F{}+G{}+H{}+I{}".format(i,i,i,i,i,i,i))
+        #inCols = [41,20,160,1, 142,104,86,83,106] #41 is EAN - copying that from template, then matching with this
+        inCols = [20,160,1, 142,104,86,83,106] 
+
+        for i, ean in enumerate(dbOut.ws(ws="Sheet1").col(col=1), start=1):
+            if not(i>1 and ean != dbOut.ws(ws='Sheet1').index(row=i-1, col=1)):
+                continue
+            for j, cell in enumerate(db.ws(ws="Sheet1").col(col=41), start=1):
+                if cell != ean:
+                    continue
+                #write whole row
+                for k, item in enumerate(inCols, start=1):
+                    dbOut.ws(ws="Sheet1").update_index(row=i, col=k+1, val=(db.ws(ws="Sheet1").index(row=j, col=item)))
+                break #break from for j??
+
+
+        # for i,item in enumerate(inCols, start=2):
+        #     for j, cell in enumerate(db.ws(ws='Sheet1').col(col=item), start=1):
+        #         #if col41 rowj == dbout col1 rowj #db.ws(ws='Sheet1').index(row=1, col=2)
+        #         if(db.ws(ws='Sheet1').index(row=j, col=41)==dbOut.ws(ws='Sheet1').index(row=j, col=1)): #this is bs
+        #             dbOut.ws(ws="Sheet1").update_index(row=j, col=i, val=cell)
+
+        
+        #for each line in dbout, when not empty, add newcol and newcolline++
+
+        newLine=1
+
+        for i, item in enumerate(dbOut.ws(ws="Sheet1").col(col=4), start=1): #only if theres value in the line
+            if len(item)>0:
+                dbOut.ws(ws="Sheet1").update_index(row=i, col=4, val=newCol[newLine+1])
+                dbOut.ws(ws="Sheet1").update_index(row=i, col=10, val="=C{}+D{}+E{}+F{}+G{}+H{}+I{}".format(i,i,i,i,i,i,i))
+                newLine+=1
+                
+            
 
     elif(current_var.get()=='NN'):
         secondCol = [177,180,174,95,88]
@@ -66,20 +108,21 @@ def export():
         for i, item in enumerate(newCol, start=1):
             dbOut.ws(ws="Sheet1").update_index(row=i, col=4, val=newCol[i-1])
             dbOut.ws(ws="Sheet1").update_index(row=i, col=6, val="=C{}+D{}+E{}".format(i,i,i))
-        
-        
-
         #sums of all as last col
-    else:
-        #error, have to set VN as default and add message box to display error
-        #https://docs.python.org/3/library/tkinter.messagebox.html
-        print("coze")
+            
+    # else:
+    #     #error, have to set VN as default and add message box to display error
+    #     #https://docs.python.org/3/library/tkinter.messagebox.html
+    #     print("coze")
     outName=fd.asksaveasfilename(initialfile="output", defaultextension=".xlsx")
     xl.writexl(db=dbOut, fn=outName)
 
 root = Tk()
-root.geometry('350x200')
+root.geometry('350x250')
 root.title(':3')
+
+template_text = Text(root, height = 2, width = 20) #make readonly
+import_btn = Button(root, text="Import", command=importCallback)
 
 path_text = Text(root, height = 2, width = 20) #make readonly
 browse_btn = Button(root, text="Browse", command=callback)
@@ -97,10 +140,14 @@ export_btn = Button(root, text="Export", command=export)
 
 output_text = Text(root, height = 4, width = 40) #also make readonly - will be used for errors or sth maybe it might not be necessarry 
 
-path_text.grid(column=0, row=0, padx=10, pady=10)
-browse_btn.grid(column=1, row=0)
-combobox.grid(column=0, row=1)
-export_btn.grid(column=1, row=1)
+
+template_text.grid(column=0, row=0, padx=10, pady=10)
+import_btn.grid(column=1, row=0)
+
+path_text.grid(column=0, row=1, padx=10, pady=10)
+browse_btn.grid(column=1, row=1)
+combobox.grid(column=0, row=2)
+export_btn.grid(column=1, row=2)
 output_text.grid(column=0, row=3, columnspan=2, padx=10, pady=10)
 
 #https://pylightxl.readthedocs.io/en/latest/quickstart.html
