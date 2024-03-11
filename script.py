@@ -50,7 +50,7 @@ def export():
                     break;        
             newCol.append(x) #all into one list with one col
         
-        for i, cell in enumerate(dbTemplate.ws(ws=dbTemplate.ws[current_var.get()]).col(col=2), start=1):
+        for i, cell in enumerate(dbTemplate.ws(ws=current_var.get()).col(col=2), start=1):
             dbOut.ws(ws="Sheet1").update_index(row=i, col=1, val=cell)
 
 
