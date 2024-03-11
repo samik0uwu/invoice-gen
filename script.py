@@ -13,6 +13,9 @@ def importCallback(): #rename from callback bcuz then im gonna have to save the 
     global templatePath;
     templatePath= fd.askopenfilename()
     template_text.insert('end', templatePath)
+    #put values into template_cb
+    dbTemplate = xl.readxl(fn=templatePath)
+    template_cb['values']= dbTemplate.ws_names
 
 
 # def importExcel():
@@ -20,10 +23,9 @@ def importCallback(): #rename from callback bcuz then im gonna have to save the 
 
 def export():
     db = xl.readxl(fn=inPath) #db with input data #delete first(actually second row) because its not needed and its messing things up
-    db.add_nr(name="Table1", ws="Sheet1", address="A2:GA2")
-    db.remove_nr(name="Table1")
+
     
-    dbTemplate = xl.readxl(fn=templatePath)
+
     print(inPath)
     print("hello")
     #creaty empty dbs
@@ -31,7 +33,8 @@ def export():
     dbOut.add_ws(ws="Sheet1") 
     #have to add EANs etc before all this 
     #different for VN and NN though
-    if(current_var.get()=='VN'):
+    if(current_var_1.get()=='VN'):
+        dbTemplate = xl.readxl(fn=templatePath)
         #sum all these cols to one
         secondCol = [112,71,77,88,95]
         dbs = []; #db with all cols from secondCol
@@ -47,7 +50,7 @@ def export():
                     break;        
             newCol.append(x) #all into one list with one col
         
-        for i, cell in enumerate(dbTemplate.ws(dbTemplate.ws_names[0]).col(col=2), start=1):
+        for i, cell in enumerate(dbTemplate.ws(ws=dbTemplate.ws[current_var.get()]).col(col=2), start=1):
             dbOut.ws(ws="Sheet1").update_index(row=i, col=1, val=cell)
 
 
@@ -84,8 +87,8 @@ def export():
                 newLine+=1
                 
             
-
-    elif(current_var.get()=='NN'):
+    #also need to edit this oh god
+    elif(current_var_1.get()=='NN'):
         secondCol = [177,180,174,95,88]
         dbs = []; #db with all cols from secondCol
         for i,item in enumerate(secondCol, start=0):
@@ -118,18 +121,24 @@ def export():
     xl.writexl(db=dbOut, fn=outName)
 
 root = Tk()
-root.geometry('350x250')
+root.geometry('350x300')
 root.title(':3')
 
-template_text = Text(root, height = 2, width = 20) #make readonly
-import_btn = Button(root, text="Import", command=importCallback)
+current_var = StringVar()
 
-path_text = Text(root, height = 2, width = 20) #make readonly
+template_label = Label(root, text="Template")
+template_text = Text(root, height = 2, width = 10) #make readonly
+import_btn = Button(root, text="Import", command=importCallback)
+template_cb=Combobox(root, textvariable=current_var, width=10)
+
+
+source_label=Label(root, text="Source")
+path_text = Text(root, height = 2, width = 25) #make readonly
 browse_btn = Button(root, text="Browse", command=callback)
 
 
-current_var = StringVar()
-combobox = Combobox(root, textvariable=current_var) 
+current_var_1 = StringVar()
+combobox = Combobox(root, textvariable=current_var_1, width=25) 
 combobox['values']=('VN', 'NN')
 combobox['state'] = 'readonly'
 combobox.set("VN")
@@ -141,14 +150,17 @@ export_btn = Button(root, text="Export", command=export)
 output_text = Text(root, height = 4, width = 40) #also make readonly - will be used for errors or sth maybe it might not be necessarry 
 
 
-template_text.grid(column=0, row=0, padx=10, pady=10)
-import_btn.grid(column=1, row=0)
+template_label.grid(column=0, row=0, padx=10, pady=10)
+template_text.grid(column=0, row=1,)
+import_btn.grid(column=2, row=1)
+template_cb.grid(column=1, row=1)
 
-path_text.grid(column=0, row=1, padx=10, pady=10)
-browse_btn.grid(column=1, row=1)
-combobox.grid(column=0, row=2)
-export_btn.grid(column=1, row=2)
-output_text.grid(column=0, row=3, columnspan=2, padx=10, pady=10)
+source_label.grid(column=0, row=2, padx=10, pady=10)
+path_text.grid(column=0, row=3,columnspan=2)
+browse_btn.grid(column=2, row=3)
+combobox.grid(column=0, row=4,columnspan=2, padx=10, pady=10)
+export_btn.grid(column=2, row=4)
+output_text.grid(column=0, row=5, columnspan=3, padx=10)
 
 #https://pylightxl.readthedocs.io/en/latest/quickstart.html
 
