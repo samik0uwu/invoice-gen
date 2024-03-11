@@ -121,45 +121,46 @@ def export():
     xl.writexl(db=dbOut, fn=outName)
 
 root = Tk()
-root.geometry('350x300')
+root.geometry('350x350')
 root.title(':3')
 
 current_var = StringVar()
 
-template_label = Label(root, text="Template")
-template_text = Text(root, height = 2, width = 10) #make readonly
-import_btn = Button(root, text="Import", command=importCallback)
+template_label = Label(root, text="Vstupní soubor:")
+template_text = Text(root, height = 2, width = 40) #make readonly
+import_btn = Button(root, text="Nahrát", command=importCallback)
 template_cb=Combobox(root, textvariable=current_var, width=10)
 
 
-source_label=Label(root, text="Source")
-path_text = Text(root, height = 2, width = 25) #make readonly
-browse_btn = Button(root, text="Browse", command=callback)
+source_label=Label(root, text="Zdroj dat:")
+path_text = Text(root, height = 2, width = 40) #make readonly
+browse_btn = Button(root, text="Nahrát", command=callback)
 
 
 current_var_1 = StringVar()
-combobox = Combobox(root, textvariable=current_var_1, width=25) 
+combobox = Combobox(root, textvariable=current_var_1, width=10) 
 combobox['values']=('VN', 'NN')
 combobox['state'] = 'readonly'
 combobox.set("VN")
 
-export_btn = Button(root, text="Export", command=export)
+export_btn = Button(root, text="Export", command=export, width=30)
 
 #https://www.pythontutorial.net/tkinter/tkinter-progressbar/
 
 output_text = Text(root, height = 4, width = 40) #also make readonly - will be used for errors or sth maybe it might not be necessarry 
 
 
-template_label.grid(column=0, row=0, padx=10, pady=10)
-template_text.grid(column=0, row=1,)
-import_btn.grid(column=2, row=1)
-template_cb.grid(column=1, row=1)
+template_label.grid(column=0, row=0, padx=10, pady=(20,10))
+import_btn.grid(column=1, row=0,pady=(20,10))
+template_cb.grid(column=2, row=0,pady=(20,10))
+template_text.grid(column=0, row=1, columnspan=3, pady=10)
 
-source_label.grid(column=0, row=2, padx=10, pady=10)
-path_text.grid(column=0, row=3,columnspan=2)
-browse_btn.grid(column=2, row=3)
-combobox.grid(column=0, row=4,columnspan=2, padx=10, pady=10)
-export_btn.grid(column=2, row=4)
+source_label.grid(column=0, row=2, padx=10, pady=(20,10))
+browse_btn.grid(column=1, row=2,pady=(20,10))
+combobox.grid(column=2, row=2,pady=(20,10))
+path_text.grid(column=0, row=3,columnspan=3, padx=10, pady=10)
+
+export_btn.grid(column=0, row=4, columnspan=3, pady=10)
 output_text.grid(column=0, row=5, columnspan=3, padx=10)
 
 #https://pylightxl.readthedocs.io/en/latest/quickstart.html
